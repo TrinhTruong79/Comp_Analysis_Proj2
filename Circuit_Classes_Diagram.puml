@@ -1,0 +1,99 @@
+@startuml
+' =========================
+' Styling (optional but nice)
+' =========================
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+hide empty methods
+hide empty fields
+
+' =========================
+' Classes
+' =========================
+
+class Circuit {
+  +name: str
+  +buses: dict
+  +transformers: dict
+  +transmission_lines: dict
+  +generators: dict
+  +loads: dict
+  --
+  +__init__(name: str)
+  +add_bus(name: str, nominal_kv: float)
+  +add_transformer(name: str, bus1_name: str, bus2_name: str, r: float, x: float)
+  +add_transmission_line(name: str, bus1_name: str, bus2_name: str, r: float, x: float, g: float, b: float)
+  +add_generator(name: str, bus1_name: str, voltage_setpoint: float, mw_setpoint: float)
+  +add_load(name: str, bus1_name: str, mw: float, mvar: float)
+}
+
+class Bus {
+  {static} _bus_counter: int
+  --
+  +name: str
+  +nominal_kv: float
+  +bus_index: int
+  --
+  +__init__(name: str, nominal_kv: float)
+}
+
+class Transformer {
+  +name: str
+  +bus1_name: str
+  +bus2_name: str
+  +r: float
+  +x: float
+  --
+  +__init__(name: str, bus1_name: str, bus2_name: str, r: float, x: float)
+}
+
+class TransmissionLine {
+  +name: str
+  +bus1_name: str
+  +bus2_name: str
+  +r: float
+  +x: float
+  +g: float
+  +b: float
+  --
+  +__init__(name: str, bus1_name: str, bus2_name: str, r: float, x: float, g: float, b: float)
+}
+
+class Load {
+  +name: str
+  +bus1_name: str
+  +mw: float
+  +mvar: float
+  --
+  +__init__(name: str, bus1_name: str, mw: float, mvar: float)
+}
+
+class Generator {
+  +name: str
+  +bus1_name: str
+  +voltage_setpoint: float
+  +mw_setpoint: float
+  --
+  +__init__(name: str, bus1_name: str, voltage_setpoint: float, mw_setpoint: float)
+}
+
+' =========================
+' Relationships
+' =========================
+
+' Circuit stores each equipment type in a dict (aggregation/composition feel)
+Circuit "1" o-- "*" Bus : buses{ name -> Bus }
+Circuit "1" o-- "*" Transformer : transformers{ name -> Transformer }
+Circuit "1" o-- "*" TransmissionLine : transmission_lines{ name -> TransmissionLine }
+Circuit "1" o-- "*" Generator : generators{ name -> Generator }
+Circuit "1" o-- "*" Load : loads{ name -> Load }
+
+' Bus references are stored as strings currently (Milestone 1/2),
+' but we can still show intended connectivity as dependencies to Bus.
+Transformer ..> Bus : bus1_name / bus2_name
+TransmissionLine ..> Bus : bus1_name / bus2_name
+Generator ..> Bus : bus1_name
+Load ..> Bus : bus1_name
+
+@enduml

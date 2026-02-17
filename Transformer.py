@@ -37,3 +37,5 @@ class Transformer:
                 f"bus2={self.bus2_name}, "
                 f"r={self.r}, x={self.x})")
 
+
+
